@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { type PlayerState, type Rival } from '../types/game';
 import { getDreamLife, getPlayStyleTitle, getFinalRankings } from '../logic/scoring';
+import AssetTrendChart from './AssetTrendChart';
 
 interface Props {
   player: PlayerState;
@@ -96,6 +97,13 @@ const ResultScreen: React.FC<Props> = ({ player, rivals, onRestart, onPlayResult
             </div>
           );
         })}
+      </div>
+      
+      <div className="slide-up" style={{ animationDelay: '0.6s', width: '100%', maxWidth: '700px', margin: 'var(--sp-md) auto' }}>
+        <AssetTrendChart
+          playerHistory={player.history}
+          rivals={rivals.map(r => ({ name: r.name, emoji: r.emoji, history: r.history }))}
+        />
       </div>
       
       <button className="btn-restart slide-up" style={{ animationDelay: '0.8s' }} onClick={onRestart} id="btn-restart">
