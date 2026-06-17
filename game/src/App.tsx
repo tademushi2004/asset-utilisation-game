@@ -13,6 +13,8 @@ import ConfirmModal from './components/ConfirmModal';
 import EventPopup from './components/EventPopup';
 import LifeEventPopup from './components/LifeEventPopup';
 import SoundTestPanel from './components/SoundTestPanel';
+import VictoryAnimation from './components/VictoryAnimation';
+import { getFinalRankings } from './logic/scoring';
 
 const App: React.FC = () => {
   const { 
@@ -32,6 +34,8 @@ const App: React.FC = () => {
   const [showEventPopup, setShowEventPopup] = useState(false);
   const [showLifeEventPopup, setShowLifeEventPopup] = useState(false);
   const [screenShake, setScreenShake] = useState(false);
+  const [showingVictory, setShowingVictory] = useState(false);
+  const [victoryDone, setVictoryDone] = useState(false);
   
   // コイン移動時のサウンド + ハプティクス
   const handleCoinAdd = useCallback(() => {
@@ -101,6 +105,29 @@ const App: React.FC = () => {
     resetGame();
   }, [resetGame]);
   
+  // 優勝判定
+  const isWinner = React.useMemo(() => {
+    if (state.phase !== 'RESULT') return false;
+    const rankings = getFinalRankings(state.player.coins, state.rivals);
+    return rankings[0].isPlayer;
+  }, [state.phase, state.player.coins, state.rivals]);
+
+  useEffect(() => {
+    if (state.phase === 'RESULT') {
+      if (isWinner && !victoryDone && !showingVictory) {
+        setShowingVictory(true);
+      }
+    } else if (state.phase === 'TITLE') {
+      setVictoryDone(false);
+      setShowingVictory(false);
+    }
+  }, [state.phase, isWinner, victoryDone, showingVictory]);
+
+  const handleVictoryComplete = useCallback(() => {
+    setShowingVictory(false);
+    setVictoryDone(true);
+  }, []);
+  
   // ===== Render =====
   
   // タイトル画面
@@ -114,6 +141,9 @@ const App: React.FC = () => {
   
   // リザルト画面
   if (state.phase === 'RESULT') {
+    if (showingVictory) {
+      return <VictoryAnimation player={state.player} rivals={state.rivals} onComplete={handleVictoryComplete} />;
+    }
     return (
       <div className="app-container">
         <ResultScreen

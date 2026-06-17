@@ -15,9 +15,9 @@ export interface AssetClassDef {
 export const ASSET_CLASSES: AssetClassDef[] = [
   { id: 'cash',           name: '預金（水）',   emoji: '💧', baseReturn: 0.00, riskRange: 0.00, color: '#4FC3F7', description: '絶対に減らないがインフレに弱い' },
   { id: 'domestic_bond',  name: '国内債券',     emoji: '🥬', baseReturn: 0.05, riskRange: 0.03, color: '#81C784', description: 'ディフェンスの要' },
-  { id: 'foreign_bond',   name: '外国債券',     emoji: '🥦', baseReturn: 0.06, riskRange: 0.08, color: '#FFB74D', description: 'ミドルリスク' },
-  { id: 'domestic_stock',  name: '国内株式',     emoji: '🥩', baseReturn: 0.08, riskRange: 0.18, color: '#E57373', description: '成長エンジン' },
-  { id: 'foreign_stock',  name: '外国株式',     emoji: '🍖', baseReturn: 0.03, riskRange: 0.40, color: '#BA68C8', description: 'ハイリスク・ハイリターン' },
+  { id: 'foreign_bond',   name: '外国債券',     emoji: '🥦', baseReturn: 0.07, riskRange: 0.08, color: '#FFB74D', description: 'ミドルリスク' },
+  { id: 'domestic_stock',  name: '国内株式',     emoji: '🥩', baseReturn: 0.09, riskRange: 0.18, color: '#E57373', description: '成長エンジン' },
+  { id: 'foreign_stock',  name: '外国株式',     emoji: '🍖', baseReturn: 0.12, riskRange: 0.40, color: '#BA68C8', description: 'ハイリスク・ハイリターン' },
 ];
 
 export function getAssetDef(id: AssetClassId): AssetClassDef {
@@ -122,6 +122,7 @@ export interface PlayerState {
   wallet: number;             // 未配分のコイン
   history: number[];          // 各ターン終了時の資産推移
   allocationHistory: Allocation[];  // 各ターンの配分記録（称号判定用）
+  targetRatios: Record<AssetClassId, number> | null; // 前回比率配分用の目標比率
 }
 
 // ===== ゲーム全体状態 =====

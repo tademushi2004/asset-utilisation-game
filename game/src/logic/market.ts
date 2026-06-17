@@ -42,16 +42,16 @@ export function calculateMarketRates(
   
   // イベント補正
   if (event === 'CRASH') {
-    // 大暴落: 株式を -30% 〜 -50% に強制
-    rates.domestic_stock = -(0.30 + Math.random() * 0.20);
-    rates.foreign_stock = -(0.30 + Math.random() * 0.20);
+    // 大暴落: 株式を -25% 〜 -45% に強制
+    rates.domestic_stock = -(0.25 + Math.random() * 0.20);
+    rates.foreign_stock = -(0.25 + Math.random() * 0.20);
   } else if (event === 'INFLATION') {
     // インフレの波: 預金を -5% に強制
     rates.cash = -0.05;
   } else if (event === 'BOOM') {
-    // 好景気ブーム: 株式に +10% ボーナス
-    rates.domestic_stock = (rates.domestic_stock || 0) + 0.10;
-    rates.foreign_stock = (rates.foreign_stock || 0) + 0.10;
+    // 好景気ブーム: 株式に +12% ボーナス
+    rates.domestic_stock = (rates.domestic_stock || 0) + 0.12;
+    rates.foreign_stock = (rates.foreign_stock || 0) + 0.12;
   }
   
   return rates as Record<AssetClassId, number>;
@@ -130,7 +130,7 @@ export function createMarketEvent(type: EventType): MarketEvent | null {
       return {
         type: 'CRASH',
         name: `${crashNames[Math.floor(Math.random() * crashNames.length)]}の大暴落！`,
-        description: '国内・外国株式が大暴落！ -30%〜-50%の損失が発生します！',
+        description: '国内・外国株式が大暴落！ -25%〜-45%の損失が発生します！',
         emoji: '💥',
       };
     case 'INFLATION':
@@ -144,7 +144,7 @@ export function createMarketEvent(type: EventType): MarketEvent | null {
       return {
         type: 'BOOM',
         name: '好景気ブーム到来！',
-        description: '景気拡大！ 株式に+10%のボーナスが付きます！',
+        description: '景気拡大！ 株式に+12%のボーナスが付きます！',
         emoji: '🎉',
       };
     default:
