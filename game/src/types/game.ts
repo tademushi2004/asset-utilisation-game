@@ -89,7 +89,7 @@ export interface Rival {
   emoji: string;
   description: string;
   coins: number;
-  strategy: 'gambler' | 'timid' | 'panic' | 'random' | 'data';
+  strategy: 'gambler' | 'timid' | 'panic' | 'smart' | 'data';
   panickedLastTurn: boolean;  // パニックのロウ用
   history: number[];          // 各ターン終了時の資産推移
 }
@@ -108,8 +108,8 @@ export function getRivalStrategyLabel(rival: Rival, lastEvent: EventType): strin
         return '😰 パニック → 預金 100%';
       }
       return '国内株 25% / 外国株 25% / 国内債 25% / 外国債 25%';
-    case 'random':
-      return '🎲 毎ターン完全にランダム配分';
+    case 'smart':
+      return '🦉 預金30確保＋残り均等の王道必勝法';
     case 'data':
       return '💻 前回の値動きに応じたマルコフ順張り戦略';
   }
