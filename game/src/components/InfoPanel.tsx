@@ -12,9 +12,9 @@ interface Props {
 const InfoPanel: React.FC<Props> = ({ turn, currentEvent, marketHistory, eventHistory }) => {
   return (
     <div className="info-panel">
-      <div className="info-panel__section glass-panel info-panel__section--chart">
+      <div className="info-panel__section glass-panel info-panel__section--chart" style={{ display: 'flex', flexDirection: 'column' }}>
         <div className="info-panel__label">📊 マーケット推移</div>
-        <div className="info-panel__chart-container">
+        <div className="info-panel__chart-container" style={{ flex: 1, minHeight: 0 }}>
            <MarketChart marketHistory={marketHistory} turn={turn} />
         </div>
       </div>

@@ -1173,33 +1173,38 @@ body {
 /* ===== Responsive ===== */
 @media (max-width: 900px) {
   .game-main {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    display: flex;
+    flex-direction: column;
     overflow-y: auto;
     padding-right: 8px; /* For scrollbar */
   }
   
   .info-panel {
-    flex-direction: row;
+    flex-direction: column;
     overflow-x: hidden;
     overflow-y: visible;
+    flex-shrink: 0;
   }
 
   .game-center-col {
     overflow-y: visible !important;
     padding-right: 0;
+    flex-shrink: 0;
   }
   
   .rival-leaderboard {
     overflow-y: visible;
+    flex-shrink: 0;
   }
   
   .info-panel__section--chart {
-    flex: 6;
+    flex: none;
+    height: 250px;
   }
   
   .info-panel__section--events {
-    flex: 4;
+    flex: none;
+    height: 200px;
   }
   
   .title-screen__heading {
