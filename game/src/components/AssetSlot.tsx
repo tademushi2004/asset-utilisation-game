@@ -16,7 +16,6 @@ const AssetSlot: React.FC<Props> = ({ asset, coins, totalPlayerCoins, onAllocate
   const [isHolding, setIsHolding] = useState(false);
   const holdIntervalRef = useRef<number | null>(null);
   const holdStartRef = useRef<number>(0);
-  const lastTapRef = useRef<number>(0);
   const touchDirectionRef = useRef<number>(1);
   
   // === 共通: 長押し開始 ===
@@ -60,22 +59,24 @@ const AssetSlot: React.FC<Props> = ({ asset, coins, totalPlayerCoins, onAllocate
     stopHold();
   }, [stopHold]);
   
-  // === タッチ操作 (モバイル向け) ===
-  // シングルタップ: 追加 (+1)、ダブルタップ: 回収 (-1)、長押し: 連続（方向は直前のタップで決定）
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+  // === タッチ操作 (モバイル向け: ＋/−ボタン用) ===
+  const handleTouchAdd = useCallback((e: React.TouchEvent) => {
     if (disabled) return;
-    e.preventDefault(); // スクロールやゴーストクリック防止
-    
-    const now = Date.now();
-    const isDoubleTap = (now - lastTapRef.current) < 300;
-    lastTapRef.current = now;
-    
-    const direction = isDoubleTap ? -1 : 1;
-    startHold(direction);
+    e.preventDefault();
+    e.stopPropagation();
+    startHold(1);
   }, [disabled, startHold]);
 
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+  const handleTouchRemove = useCallback((e: React.TouchEvent) => {
+    if (disabled) return;
     e.preventDefault();
+    e.stopPropagation();
+    startHold(-1);
+  }, [disabled, startHold]);
+
+  const handleTouchEndButton = useCallback((e: React.TouchEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     stopHold();
   }, [stopHold]);
   
@@ -112,15 +113,14 @@ const AssetSlot: React.FC<Props> = ({ asset, coins, totalPlayerCoins, onAllocate
   return (
     <div
       className={`asset-slot ${isHolding ? 'asset-slot--active' : ''}`}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
       onContextMenu={handleContextMenu}
       id={`asset-slot-${asset.id}`}
     >
+      {/* PC向け: 円全体がクリック/長押しのターゲット */}
       <div
         className="asset-slot__circle"
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
         style={{
           '--slot-color': asset.color,
           '--fill-percent': `${fillPercent}%`,
@@ -137,9 +137,35 @@ const AssetSlot: React.FC<Props> = ({ asset, coins, totalPlayerCoins, onAllocate
           {lastRate >= 0 ? '+' : ''}{(lastRate * 100).toFixed(1)}%
         </span>
       )}
+      {/* モバイル向け: 明示的な ＋/− ボタン */}
+      {!disabled && (
+        <div className="asset-slot__mobile-buttons">
+          <button
+            className="asset-slot__btn asset-slot__btn--minus"
+            onTouchStart={handleTouchRemove}
+            onTouchEnd={handleTouchEndButton}
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startHold(-1); }}
+            onMouseUp={(e) => { e.stopPropagation(); stopHold(); }}
+            aria-label={`${asset.name}から回収`}
+            style={{ '--slot-color': asset.color } as React.CSSProperties}
+          >
+            −
+          </button>
+          <button
+            className="asset-slot__btn asset-slot__btn--plus"
+            onTouchStart={handleTouchAdd}
+            onTouchEnd={handleTouchEndButton}
+            onMouseDown={(e) => { e.preventDefault(); e.stopPropagation(); startHold(1); }}
+            onMouseUp={(e) => { e.stopPropagation(); stopHold(); }}
+            aria-label={`${asset.name}に追加`}
+            style={{ '--slot-color': asset.color } as React.CSSProperties}
+          >
+            ＋
+          </button>
+        </div>
+      )}
     </div>
   );
 };
 
 export default AssetSlot;
-
