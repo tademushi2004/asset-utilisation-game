@@ -46,6 +46,7 @@ export function getPlayStyleTitle(player: PlayerState): PlayStyleTitle {
   let coreSatelliteTurns = 0;
   let stockHeavyTurns = 0;
   let cashHeavyTurns = 0;
+  let bondHeavyTurns = 0;
   let volatileTurns = 0;
   
   for (let i = 0; i < totalTurns; i++) {
@@ -81,6 +82,10 @@ export function getPlayStyleTitle(player: PlayerState): PlayStyleTitle {
     // 株式偏重チェック: 株式合計が70%以上
     const stockRatio = (ratios.domestic_stock || 0) + (ratios.foreign_stock || 0);
     if (stockRatio >= 0.70) stockHeavyTurns++;
+    
+    // 債券偏重チェック: 債券合計が70%以上
+    const bondRatio = (ratios.domestic_bond || 0) + (ratios.foreign_bond || 0);
+    if (bondRatio >= 0.70) bondHeavyTurns++;
     
     // 預金偏重チェック: 預金が70%以上
     if ((ratios.cash || 0) >= 0.70) cashHeavyTurns++;
@@ -132,12 +137,21 @@ export function getPlayStyleTitle(player: PlayerState): PlayStyleTitle {
     };
   }
   
+  if (bondHeavyTurns / totalTurns >= 0.5) {
+    return {
+      title: '草食系サラダボウル',
+      subtitle: '安定志向の野菜たっぷりヘルシー運用',
+      emoji: '🥗',
+      rank: 'B',
+    };
+  }
+  
   if (stockHeavyTurns / totalTurns >= 0.5) {
     return {
       title: '胃もたれ焼肉大王',
       subtitle: 'お肉への情熱は誰にも止められない',
       emoji: '🥩',
-      rank: 'A',
+      rank: 'C',
     };
   }
   
@@ -146,7 +160,7 @@ export function getPlayStyleTitle(player: PlayerState): PlayStyleTitle {
       title: '水飲み修行僧',
       subtitle: '安全第一、石橋を叩いて渡る達人',
       emoji: '🧘',
-      rank: 'A',
+      rank: 'C',
     };
   }
   
