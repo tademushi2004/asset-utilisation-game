@@ -86,19 +86,14 @@ const App: React.FC = () => {
     }
   }, [state.phase, state.turn]); // ターンとフェーズの変更時のみ実行
 
-  
-  // 回収フェーズの自動進行
+  // 回収フェーズの音声再生のみ
   useEffect(() => {
     if (state.phase === 'COLLECTION') {
       const prevResult = state.turnResults[state.turnResults.length - 1];
       const diff = prevResult ? prevResult.playerAfter - prevResult.playerBefore : 0;
       sound.playCollection(diff);
-      const timer = setTimeout(() => {
-        collectionDone();
-      }, 2000);
-      return () => clearTimeout(timer);
     }
-  }, [state.phase, state.turn]); // ターンとフェーズの変更時のみ実行
+  }, [state.phase]); // ターンとフェーズの変更時のみ実行
   
   // リタイア処理
   const handleRetire = useCallback(() => {
@@ -282,6 +277,14 @@ const App: React.FC = () => {
             <span style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginRight: '12px' }}>総資産:</span>
             {Math.round(state.player.coins)} コイン
           </div>
+          
+          <button 
+            className="btn-end-turn slide-up" 
+            style={{ marginTop: 'var(--sp-xl)', animationDelay: '0.4s', padding: '16px 48px', fontSize: '1.2rem', minWidth: '200px' }}
+            onClick={collectionDone}
+          >
+            次へ
+          </button>
         </div>
       </div>
     );

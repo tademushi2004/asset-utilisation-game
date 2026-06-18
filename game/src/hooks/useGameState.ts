@@ -241,8 +241,8 @@ function gameReducer(state: GameState, action: GameAction): GameState {
             type: 'LIFE_EVENT',
             name: lifeEvent.name,
             description: penalty === -1
-              ? `${lifeEvent.description}。預金不足！ 総資産の20%（${actualPenalty}コイン）を失った！`
-              : `${lifeEvent.description}。預金から${actualPenalty}コインを支払った。`,
+              ? `${lifeEvent.description}。預金不足により、ペナルティとして ${actualPenalty} コインを失った！`
+              : `${lifeEvent.description}。預金から ${actualPenalty} コインを支払った。`,
             emoji: lifeEvent.emoji,
           },
         };
