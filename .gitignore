@@ -1,0 +1,6 @@
+# Blog & images (private)
+blog_*.md
+images/
+
+# Scratch scripts
+game/scratch/
