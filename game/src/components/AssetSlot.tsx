@@ -16,16 +16,14 @@ const AssetSlot: React.FC<Props> = ({ asset, coins, totalPlayerCoins, onAllocate
   const [isHolding, setIsHolding] = useState(false);
   const holdIntervalRef = useRef<number | null>(null);
   const holdStartRef = useRef<number>(0);
+  const lastTapRef = useRef<number>(0);
+  const touchDirectionRef = useRef<number>(1);
   
-  // ホイール操作はページスクロールと干渉するため廃止
-  // 長押し - 左クリック = 追加、右クリック = 回収
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+  // === 共通: 長押し開始 ===
+  const startHold = useCallback((direction: number) => {
     if (disabled) return;
-    e.preventDefault();
-    const isRightClick = e.button === 2;
-    const direction = isRightClick ? -1 : 1;
-    
     holdStartRef.current = Date.now();
+    touchDirectionRef.current = direction;
     setIsHolding(true);
     
     // 最初の1枚
@@ -36,18 +34,50 @@ const AssetSlot: React.FC<Props> = ({ asset, coins, totalPlayerCoins, onAllocate
     holdIntervalRef.current = window.setInterval(() => {
       const elapsed = Date.now() - holdStartRef.current;
       const rate = elapsed > 1000 ? 5 : 1;
-      onAllocate(asset.id, direction * rate);
-      if (direction > 0) onCoinAdd(); else onCoinRemove();
+      onAllocate(asset.id, touchDirectionRef.current * rate);
+      if (touchDirectionRef.current > 0) onCoinAdd(); else onCoinRemove();
     }, 100);
   }, [asset.id, onAllocate, onCoinAdd, onCoinRemove, disabled]);
-  
-  const handleMouseUp = useCallback(() => {
+
+  // === 共通: 長押し解除 ===
+  const stopHold = useCallback(() => {
     setIsHolding(false);
     if (holdIntervalRef.current) {
       clearInterval(holdIntervalRef.current);
       holdIntervalRef.current = null;
     }
   }, []);
+
+  // === マウス操作 (PC向け) ===
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    if (disabled) return;
+    e.preventDefault();
+    const isRightClick = e.button === 2;
+    startHold(isRightClick ? -1 : 1);
+  }, [disabled, startHold]);
+  
+  const handleMouseUp = useCallback(() => {
+    stopHold();
+  }, [stopHold]);
+  
+  // === タッチ操作 (モバイル向け) ===
+  // シングルタップ: 追加 (+1)、ダブルタップ: 回収 (-1)、長押し: 連続（方向は直前のタップで決定）
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    if (disabled) return;
+    e.preventDefault(); // スクロールやゴーストクリック防止
+    
+    const now = Date.now();
+    const isDoubleTap = (now - lastTapRef.current) < 300;
+    lastTapRef.current = now;
+    
+    const direction = isDoubleTap ? -1 : 1;
+    startHold(direction);
+  }, [disabled, startHold]);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    e.preventDefault();
+    stopHold();
+  }, [stopHold]);
   
   // クリーンアップ
   useEffect(() => {
@@ -60,9 +90,13 @@ const AssetSlot: React.FC<Props> = ({ asset, coins, totalPlayerCoins, onAllocate
     };
     window.addEventListener('mouseup', handleGlobalUp);
     window.addEventListener('mouseleave', handleGlobalUp);
+    window.addEventListener('touchend', handleGlobalUp);
+    window.addEventListener('touchcancel', handleGlobalUp);
     return () => {
       window.removeEventListener('mouseup', handleGlobalUp);
       window.removeEventListener('mouseleave', handleGlobalUp);
+      window.removeEventListener('touchend', handleGlobalUp);
+      window.removeEventListener('touchcancel', handleGlobalUp);
       if (holdIntervalRef.current) clearInterval(holdIntervalRef.current);
     };
   }, []);
@@ -80,6 +114,8 @@ const AssetSlot: React.FC<Props> = ({ asset, coins, totalPlayerCoins, onAllocate
       className={`asset-slot ${isHolding ? 'asset-slot--active' : ''}`}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       onContextMenu={handleContextMenu}
       id={`asset-slot-${asset.id}`}
     >
@@ -106,3 +142,4 @@ const AssetSlot: React.FC<Props> = ({ asset, coins, totalPlayerCoins, onAllocate
 };
 
 export default AssetSlot;
+
