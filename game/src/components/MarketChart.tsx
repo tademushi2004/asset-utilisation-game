@@ -127,14 +127,11 @@ const MarketChart: React.FC<Props> = ({ marketHistory, turn }) => {
   
   return (
     <div className="market-chart" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-      <div style={{ flex: 1, minHeight: 0 }}>
-        <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
-      </div>
       <div className="market-chart__legend" style={{
         display: 'flex',
         flexWrap: 'wrap',
         gap: '8px',
-        marginTop: '8px',
+        marginBottom: '8px',
         justifyContent: 'center',
         fontSize: '0.75rem',
         color: 'rgba(255,255,255,0.7)'
@@ -145,6 +142,9 @@ const MarketChart: React.FC<Props> = ({ marketHistory, turn }) => {
             <span>{asset.emoji} {asset.name}</span>
           </div>
         ))}
+      </div>
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
       </div>
     </div>
   );

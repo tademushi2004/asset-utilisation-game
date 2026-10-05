@@ -17,15 +17,7 @@ const AssetSlot: React.FC<Props> = ({ asset, coins, totalPlayerCoins, onAllocate
   const holdIntervalRef = useRef<number | null>(null);
   const holdStartRef = useRef<number>(0);
   
-  // ホイール操作
-  const handleWheel = useCallback((e: React.WheelEvent) => {
-    if (disabled) return;
-    e.preventDefault();
-    const amount = e.deltaY < 0 ? 1 : -1;
-    onAllocate(asset.id, amount);
-    if (amount > 0) onCoinAdd(); else onCoinRemove();
-  }, [asset.id, onAllocate, onCoinAdd, onCoinRemove, disabled]);
-  
+  // ホイール操作はページスクロールと干渉するため廃止
   // 長押し - 左クリック = 追加、右クリック = 回収
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
     if (disabled) return;
@@ -86,7 +78,6 @@ const AssetSlot: React.FC<Props> = ({ asset, coins, totalPlayerCoins, onAllocate
   return (
     <div
       className={`asset-slot ${isHolding ? 'asset-slot--active' : ''}`}
-      onWheel={handleWheel}
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
       onContextMenu={handleContextMenu}

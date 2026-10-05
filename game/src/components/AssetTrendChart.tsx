@@ -161,17 +161,17 @@ const AssetTrendChart: React.FC<Props> = ({ playerHistory, rivals = [] }) => {
   }, [playerHistory, rivals]);
   
   return (
-    <div className="glass-panel" style={{ width: '100%', padding: '8px', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: '8px', textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-        <span>📈 総資産推移</span>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', fontSize: '0.7rem' }}>
-          <span style={{ color: '#ffd54f' }}>● あなた</span>
-          {rivals.map((r, i) => (
-            <span key={r.name} style={{ color: RIVAL_COLORS[i % RIVAL_COLORS.length], opacity: 0.8 }}>
-              ─ {r.emoji}
-            </span>
-          ))}
-        </div>
+    <div className="glass-panel" style={{ width: '100%', padding: '16px', display: 'flex', flexDirection: 'column' }}>
+      <div className="info-panel__label" style={{ textAlign: 'left', marginBottom: '12px', fontSize: '1.1rem' }}>
+        📈 総資産推移
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', fontSize: '0.75rem', marginBottom: '12px', justifyContent: 'center' }}>
+        <span style={{ color: '#ffd54f' }}>● あなた</span>
+        {rivals.map((r, i) => (
+          <span key={r.name} style={{ color: RIVAL_COLORS[i % RIVAL_COLORS.length], opacity: 0.8 }}>
+            ─ {r.emoji}
+          </span>
+        ))}
       </div>
       <div style={{ width: '100%', height: '140px' }}>
         <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />
