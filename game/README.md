@@ -1,73 +1,51 @@
-# React + TypeScript + Vite
+# 資産運用シミュレーションゲーム 〜お弁当マスターへの道〜
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+本作は、ブログ記事「中学生からわかる資産運用 〜お弁当メタファーで学ぶ投資と自衛〜」の内容を体感できるブラウザベースのシミュレーションゲームです。
+プレイヤーは1ターン（1年）ごとに手持ちのコイン（資産）を5つの投資先に配分し、20ターン（20年）後の最終資産額と称号（エンディング）を目指します。
 
-Currently, two official plugins are available:
+## 🎮 プレイ方法
+[GitHub PagesのURLをここに記載してください]
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ 特徴
+* **直感的な操作:** マウスのクリックや長押しだけで、コイン（資金）を各アセットに振り分けることができます。
+* **リッチなフィードバック:** 連続で投資すると音階が上がる効果音（Web Audio APIを使用）や、暴落時の画面の揺れ・振動（Haptics）で、市場の変動を体感できます。
+* **個性豊かなライバル達:** 常に全額を外国株式に突っ込むギャンブラーや、預金しかしない堅実派など、AIライバル達の資産推移とリアルタイムで競い合います。
+* **現実的なイベント:** 「〇〇ショック（大暴落）」や「インフレ」、そして突然の「ライフイベント（出費）」が容赦なくプレイヤーに襲いかかります。
 
-## React Compiler
+## 🍱 投資先（アセットクラス）
+ゲーム内では以下の5つのアセットに投資を行います。
+| 資産クラス | リスク・リターン | 備考 |
+| :--- | :--- | :--- |
+| **預金（水）** | リスク無・リターン無 | 絶対に減らないがインフレに弱い。突然の出費に備える防波堤。 |
+| **国内債券** | ローリスク・ローリターン | ディフェンスの要。 |
+| **外国債券** | ミドルリスク・ミドルリターン | 安定した利回りを狙う。 |
+| **国内株式** | ハイリスク・ハイリターン | 成長エンジン。 |
+| **外国株式** | 超ハイリスク・超ハイリターン | 暴落のリスクを伴うが、好景気で爆発的に伸びる。 |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🏆 プレイスタイル称号
+20ターン終了時のあなたの「投資行動（ポートフォリオのバランスや偏り）」に応じて、様々な称号が授与されます。
+「至高の特上松花堂弁当（コア・サテライト戦略）」や「草食系サラダボウル（債券偏重）」など、すべての称号のコンプリートを目指してみてください！
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ 技術スタック
+* **Framework:** React 19 + TypeScript
+* **Build Tool:** Vite
+* **Styling:** Vanilla CSS (CSS Modules)
+* **Audio:** Web Audio API (動的サウンド生成・外部ファイル非依存)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 💻 ローカル環境での実行方法
+1. リポジトリをクローンします。
+   ```bash
+   git clone https://github.com/your-username/your-repo-name.git
+   ```
+2. パッケージをインストールします。
+   ```bash
+   cd your-repo-name/game
+   npm install
+   ```
+3. 開発用サーバーを起動します。
+   ```bash
+   npm run dev
+   ```
+4. ブラウザで `http://localhost:5173` にアクセスします。
