@@ -486,6 +486,55 @@ body {
   color: var(--accent-red);
 }
 
+/* モバイル向け ＋/− ボタン */
+.asset-slot__mobile-buttons {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.asset-slot__btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid var(--slot-color, rgba(255,255,255,0.3));
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  line-height: 1;
+}
+
+.asset-slot__btn:active {
+  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.asset-slot__btn--plus {
+  color: var(--accent-green);
+  border-color: var(--accent-green);
+}
+
+.asset-slot__btn--minus {
+  color: var(--accent-red);
+  border-color: var(--accent-red);
+}
+
+/* PC ではボタンを非表示にする (マウス操作で十分なため) */
+@media (hover: hover) and (pointer: fine) {
+  .asset-slot__mobile-buttons {
+    display: none;
+  }
+}
+
 /* ===== Player Wallet ===== */
 .player-wallet {
   display: flex;
