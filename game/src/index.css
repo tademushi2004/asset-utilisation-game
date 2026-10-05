@@ -1067,6 +1067,9 @@ body {
   padding: var(--sp-xl) var(--sp-2xl);
   animation: eventPopIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
   min-width: 320px;
+  /* グラフ等の上に重なっても読めるように背景を濃く設定 */
+  background: rgba(18, 18, 42, 0.95);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
 }
 
 .event-popup__emoji {
