@@ -21,6 +21,12 @@ const AssetSlot: React.FC<Props> = ({ asset, coins, totalPlayerCoins, onAllocate
   // === 共通: 長押し開始 ===
   const startHold = useCallback((direction: number) => {
     if (disabled) return;
+    
+    // もし既にタイマーが走っていたら確実に止める（無限ループ・二重起動の防止）
+    if (holdIntervalRef.current) {
+      clearInterval(holdIntervalRef.current);
+    }
+    
     holdStartRef.current = Date.now();
     touchDirectionRef.current = direction;
     setIsHolding(true);
