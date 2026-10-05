@@ -87,6 +87,7 @@ export interface TurnResult {
 export interface Rival {
   name: string;
   emoji: string;
+  avatarUrl?: string;
   description: string;
   coins: number;
   strategy: 'gambler' | 'timid' | 'panic' | 'smart' | 'data';

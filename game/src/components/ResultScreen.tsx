@@ -89,7 +89,25 @@ const ResultScreen: React.FC<Props> = ({ player, rivals, onRestart, onPlayResult
               <span className={`rival-entry__rank rival-entry__rank--${index + 1}`} style={{ fontFamily: 'var(--font-display)', fontWeight: 800, width: '36px', fontSize: rStyle.fontSize, textAlign: 'center' }}>
                 {rStyle.icon}
               </span>
-              <span style={{ fontSize: '1.2rem' }}>{entry.emoji}</span>
+              {entry.avatarUrl ? (
+                <img 
+                  src={entry.avatarUrl} 
+                  alt={entry.name} 
+                  style={{ 
+                    width: '56px', 
+                    height: '56px', 
+                    borderRadius: '50%', 
+                    objectFit: 'cover',
+                    padding: entry.name.includes('オウル') ? '6px' : '0',
+                    backgroundColor: entry.name.includes('オウル') ? '#fff' : 'transparent',
+                    boxSizing: 'border-box',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.15)',
+                    margin: '0 8px'
+                  }} 
+                />
+              ) : (
+                <span style={{ fontSize: '2.5rem', width: '56px', textAlign: 'center', margin: '0 8px' }}>{entry.emoji}</span>
+              )}
               <span style={{ flex: 1, fontSize: '0.9rem', fontWeight: 600 }}>{entry.name}</span>
               <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--accent-gold)' }}>
                 {entry.coins.toFixed(1)}

@@ -40,6 +40,7 @@ const RivalLeaderboard: React.FC<Props> = ({ playerCoins, playerAllocation, play
         diff: getDiff(playerHistory),
         isPlayer: true,
         alloc: playerAllocation,
+        avatarUrl: undefined,
       },
       ...rivals.map(r => ({ 
         name: r.name, 
@@ -47,7 +48,8 @@ const RivalLeaderboard: React.FC<Props> = ({ playerCoins, playerAllocation, play
         coins: r.coins, 
         diff: getDiff(r.history),
         isPlayer: false,
-        alloc: getRivalAllocation(r, lastEvent)
+        alloc: getRivalAllocation(r, lastEvent, null),
+        avatarUrl: r.avatarUrl
       })),
     ];
     return all.sort((a, b) => b.coins - a.coins);
@@ -65,7 +67,25 @@ const RivalLeaderboard: React.FC<Props> = ({ playerCoins, playerAllocation, play
           <span className={`rival-entry__rank rival-entry__rank--${index + 1}`}>
             {index + 1}
           </span>
-          <span className="rival-entry__emoji">{entry.emoji}</span>
+          {entry.avatarUrl ? (
+            <img 
+              src={entry.avatarUrl} 
+              alt={entry.name} 
+              className="rival-entry__avatar" 
+              style={{ 
+                width: '44px', 
+                height: '44px', 
+                borderRadius: '50%', 
+                objectFit: 'cover',
+                padding: entry.name.includes('オウル') ? '5px' : '0',
+                backgroundColor: entry.name.includes('オウル') ? '#fff' : 'transparent',
+                boxSizing: 'border-box',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.15)'
+              }} 
+            />
+          ) : (
+            <span className="rival-entry__emoji" style={{ fontSize: '2rem', width: '44px', textAlign: 'center' }}>{entry.emoji}</span>
+          )}
           <div className="rival-entry__info">
             <div className="rival-entry__name">{entry.name}</div>
             <AllocationBar alloc={entry.alloc} total={entry.coins} />

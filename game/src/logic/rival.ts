@@ -8,6 +8,7 @@ export function createRivals(): Rival[] {
     {
       name: 'ライオンのレオン',
       emoji: '🦁',
+      avatarUrl: '/avatars/lion.png.jpg',
       description: '肉食獣の頂点。すべてを外国株式（肉）にベット！',
       coins: INITIAL_COINS,
       strategy: 'gambler',
@@ -17,6 +18,7 @@ export function createRivals(): Rival[] {
     {
       name: 'ゾウのエレファ',
       emoji: '🐘',
+      avatarUrl: '/avatars/elephant.png.jpg',
       description: '穏やかな草食獣。預金（水）と債券（草）のみで手堅く生きる。',
       coins: INITIAL_COINS,
       strategy: 'timid',
@@ -26,6 +28,7 @@ export function createRivals(): Rival[] {
     {
       name: 'シバイヌのシバ',
       emoji: '🐕',
+      avatarUrl: '/avatars/shiba.png.jpg',
       description: '普段は賢く分散投資するが、暴落（大きな音）でパニックに！',
       coins: INITIAL_COINS,
       strategy: 'panic',
@@ -35,6 +38,7 @@ export function createRivals(): Rival[] {
     {
       name: 'フクロウのオウル',
       emoji: '🦉',
+      avatarUrl: '/avatars/owl.png.jpg',
       description: '夜の賢者。預金30確保＋残り均等の王道必勝法を貫く。',
       coins: INITIAL_COINS,
       strategy: 'smart',
@@ -44,6 +48,7 @@ export function createRivals(): Rival[] {
     {
       name: 'サルのモンキ',
       emoji: '🐒',
+      avatarUrl: '/avatars/monkey.png.jpg',
       description: '前回の値動きをサルマネする順張り投資家',
       coins: INITIAL_COINS,
       strategy: 'data',

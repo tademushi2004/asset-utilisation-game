@@ -194,7 +194,7 @@ body {
 .game-main {
   flex: 1;
   display: grid;
-  grid-template-columns: 320px 1fr 260px;
+  grid-template-columns: 260px 1fr 390px;
   gap: var(--sp-md);
   padding: var(--sp-md);
   min-height: 0;

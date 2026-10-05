@@ -164,10 +164,10 @@ export function getPlayStyleTitle(player: PlayerState): PlayStyleTitle {
 export function getFinalRankings(
   playerCoins: number,
   rivals: Rival[]
-): { name: string; emoji: string; coins: number; isPlayer: boolean }[] {
+): { name: string; emoji: string; avatarUrl?: string; coins: number; isPlayer: boolean }[] {
   const entries = [
-    { name: 'あなた', emoji: '🙂', coins: playerCoins, isPlayer: true },
-    ...rivals.map(r => ({ name: r.name, emoji: r.emoji, coins: r.coins, isPlayer: false })),
+    { name: 'あなた', emoji: '🙂', avatarUrl: undefined, coins: playerCoins, isPlayer: true },
+    ...rivals.map(r => ({ name: r.name, emoji: r.emoji, avatarUrl: r.avatarUrl, coins: r.coins, isPlayer: false })),
   ];
   return entries.sort((a, b) => b.coins - a.coins);
 }
