@@ -6,45 +6,45 @@ import { type Allocation, type AssetClassId, type Rival, emptyAllocation, INITIA
 export function createRivals(): Rival[] {
   return [
     {
-      name: 'ギャンブラー・ケン',
-      emoji: '🎰',
-      description: '外国株式に全額ベット！',
+      name: 'ライオンのレオン',
+      emoji: '🦁',
+      description: '肉食獣の頂点。すべてを外国株式（肉）にベット！',
       coins: INITIAL_COINS,
       strategy: 'gambler',
       panickedLastTurn: false,
       history: [INITIAL_COINS],
     },
     {
-      name: 'ビビりのカメオ',
-      emoji: '🐢',
-      description: '預金に全額ベット！',
+      name: 'ゾウのエレファ',
+      emoji: '🐘',
+      description: '穏やかな草食獣。全額を預金（水）に避難。',
       coins: INITIAL_COINS,
       strategy: 'timid',
       panickedLastTurn: false,
       history: [INITIAL_COINS],
     },
     {
-      name: 'パニックのロウ',
-      emoji: '😱',
-      description: 'バランス型（暴落でパニック）',
+      name: 'シバイヌのシバ',
+      emoji: '🐕',
+      description: '普段は賢く分散投資するが、暴落（大きな音）でパニックに！',
       coins: INITIAL_COINS,
       strategy: 'panic',
       panickedLastTurn: false,
       history: [INITIAL_COINS],
     },
     {
-      name: 'ランダムのラン',
-      emoji: '🎲',
-      description: '毎ターン完全にランダムに配分！',
+      name: 'フクロウのオウル',
+      emoji: '🦉',
+      description: '夜の賢者。預金30確保＋残り均等の王道必勝法を貫く。',
       coins: INITIAL_COINS,
-      strategy: 'random',
+      strategy: 'smart',
       panickedLastTurn: false,
       history: [INITIAL_COINS],
     },
     {
-      name: 'データのデイブ',
-      emoji: '💻',
-      description: '前回の値動きを信じる順張り投資家',
+      name: 'サルのモンキ',
+      emoji: '🐒',
+      description: '前回の値動きをサルマネする順張り投資家',
       coins: INITIAL_COINS,
       strategy: 'data',
       panickedLastTurn: false,
@@ -87,24 +87,16 @@ export function getRivalAllocation(rival: Rival, lastEvent: EventType, lastRates
       break;
     }
       
-    case 'random': {
-      const weights = {
-        cash: Math.random(),
-        domestic_bond: Math.random(),
-        foreign_bond: Math.random(),
-        domestic_stock: Math.random(),
-        foreign_stock: Math.random(),
-      };
-      const totalWeight = Object.values(weights).reduce((a, b) => a + b, 0);
-      let allocated = 0;
-      const assetIds = Object.keys(weights) as AssetClassId[];
-      for (let i = 0; i < assetIds.length - 1; i++) {
-        const id = assetIds[i];
-        const amount = Math.floor(coins * (weights[id] / totalWeight));
-        alloc[id] = amount;
-        allocated += amount;
-      }
-      alloc[assetIds[assetIds.length - 1]] = coins - allocated; // 端数
+    case 'smart': {
+      // 預金30確保＋残り均等
+      const cashReserve = Math.min(coins, 30);
+      alloc.cash = cashReserve;
+      const remaining = coins - cashReserve;
+      const portion = Math.floor(remaining / 4);
+      alloc.domestic_bond = portion;
+      alloc.foreign_bond = portion;
+      alloc.domestic_stock = portion;
+      alloc.foreign_stock = remaining - (portion * 3); // 端数
       break;
     }
       

@@ -14,7 +14,9 @@ import EventPopup from './components/EventPopup';
 import LifeEventPopup from './components/LifeEventPopup';
 import SoundTestPanel from './components/SoundTestPanel';
 import VictoryAnimation from './components/VictoryAnimation';
+import AssetTrendChart from './components/AssetTrendChart';
 import { getFinalRankings } from './logic/scoring';
+import { ASSET_CLASSES } from './types/game';
 
 const App: React.FC = () => {
   const { 
@@ -194,8 +196,23 @@ const App: React.FC = () => {
   // 回収フェーズ
   if (state.phase === 'COLLECTION') {
     const prevResult = state.turnResults[state.turnResults.length - 1];
+    const prevAllocation = state.player.allocationHistory[state.player.allocationHistory.length - 1];
     const diff = prevResult ? prevResult.playerAfter - prevResult.playerBefore : 0;
     
+    // ASSET_CLASSESを利用してレシートを生成します。
+    const receiptLines = ASSET_CLASSES.map(asset => {
+      const allocated = prevAllocation ? prevAllocation[asset.id] : 0;
+      const rate = prevResult ? prevResult.rates[asset.id] : 0;
+      const profit = allocated * rate;
+      return {
+        id: asset.id,
+        name: asset.name,
+        emoji: asset.emoji,
+        profit,
+        rate
+      };
+    });
+
     return (
       <div className="app-container">
         <header className="game-header">
@@ -207,20 +224,64 @@ const App: React.FC = () => {
           </div>
         </header>
         
-        <div className="collection-phase">
-          <div className="collection-phase__coins-animation">
-            💰💰💰
+        <div className="collection-phase" style={{ padding: 'var(--sp-xl)' }}>
+          <div className="receipt-panel glass-panel slide-up" style={{ width: '100%', maxWidth: '360px', padding: 'var(--sp-lg)', backgroundColor: 'rgba(255, 255, 255, 0.08)' }}>
+            <div style={{ textAlign: 'center', marginBottom: 'var(--sp-md)', borderBottom: '1px dashed var(--border-glass)', paddingBottom: 'var(--sp-sm)' }}>
+              <div style={{ fontSize: '1.2rem', fontWeight: 700 }}>🧾 今回の運用結果</div>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {receiptLines.map(line => (
+                <div key={line.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ fontSize: '1.4rem' }}>{line.emoji}</span>
+                    <span style={{ fontSize: '0.95rem', color: 'var(--text-primary)' }}>{line.name}</span>
+                  </div>
+                  <div style={{ 
+                    fontFamily: 'var(--font-display)', 
+                    fontWeight: 700,
+                    fontSize: '1.1rem',
+                    color: line.profit > 0 ? 'var(--accent-green)' : line.profit < 0 ? 'var(--accent-red)' : 'var(--text-secondary)'
+                  }}>
+                    {line.profit > 0 ? '+' : ''}{line.profit.toFixed(1)}
+                    {line.profit !== 0 && (
+                      <span style={{ fontSize: '0.9rem', marginLeft: '6px' }}>
+                        {line.profit > 0 ? '📈' : '📉'}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+              
+              {prevResult?.lifeEvent && (
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <span style={{ fontSize: '1.4rem' }}>{prevResult.lifeEvent.emoji}</span>
+                    <span style={{ fontSize: '0.95rem', color: 'var(--accent-orange)', fontWeight: 700 }}>ライフイベント</span>
+                  </div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--accent-red)' }}>
+                    -{prevResult.lifeEventPenalty}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div style={{ marginTop: 'var(--sp-md)', paddingTop: 'var(--sp-md)', borderTop: '1px dashed var(--border-glass)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ fontWeight: 800, fontSize: '1.1rem' }}>合計損益</div>
+              <div style={{ 
+                fontFamily: 'var(--font-display)', 
+                fontSize: '1.4rem', 
+                fontWeight: 900,
+                color: diff >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'
+              }}>
+                {diff >= 0 ? '+' : ''}{diff.toFixed(1)} コイン
+              </div>
+            </div>
           </div>
-          <div className="collection-phase__label">コインが戻ってきます...</div>
-          <div className="collection-phase__amount">
+          
+          <div className="collection-phase__amount slide-up" style={{ marginTop: 'var(--sp-xl)', animationDelay: '0.2s', fontSize: '2rem' }}>
+            <span style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginRight: '12px' }}>総資産:</span>
             {Math.round(state.player.coins)} コイン
-          </div>
-          <div style={{
-            fontSize: '1.2rem',
-            fontWeight: 700,
-            color: diff >= 0 ? 'var(--accent-green)' : 'var(--accent-red)',
-          }}>
-            {diff >= 0 ? '📈 +' : '📉 '}{Math.round(diff)} コイン
           </div>
         </div>
       </div>
@@ -276,26 +337,33 @@ const App: React.FC = () => {
           eventHistory={state.eventHistory}
         />
         
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '16px', flex: 1 }}>
-          <AllocationField
-            allocation={state.player.allocation}
-            totalCoins={state.player.coins}
-            onAllocate={allocate}
-            onCoinAdd={handleCoinAdd}
-            onCoinRemove={handleCoinRemove}
-            lastRates={lastTurnResult?.rates}
-            disabled={state.phase !== 'ALLOCATION'}
+        <div className="game-center-col" style={{ display: 'flex', flexDirection: 'column', alignItems: 'stretch', justifyContent: 'flex-start', gap: '16px', flex: 1, minWidth: 0 }}>
+          <AssetTrendChart
+            playerHistory={state.player.history}
+            rivals={state.rivals.map(r => ({ name: r.name, emoji: r.emoji, history: r.history }))}
           />
-          
-          <PlayerWallet
-            wallet={state.player.wallet}
-            totalCoins={state.player.coins}
-            allocation={state.player.allocation}
-            onEndTurn={handleEndTurn}
-            onRepeatAllocation={repeatAllocation}
-            turn={state.turn}
-            disabled={state.phase !== 'ALLOCATION'}
-          />
+
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+            <AllocationField
+              allocation={state.player.allocation}
+              totalCoins={state.player.coins}
+              onAllocate={allocate}
+              onCoinAdd={handleCoinAdd}
+              onCoinRemove={handleCoinRemove}
+              lastRates={lastTurnResult?.rates}
+              disabled={state.phase !== 'ALLOCATION'}
+            />
+            
+            <PlayerWallet
+              wallet={state.player.wallet}
+              totalCoins={state.player.coins}
+              allocation={state.player.allocation}
+              onEndTurn={handleEndTurn}
+              onRepeatAllocation={repeatAllocation}
+              turn={state.turn}
+              disabled={state.phase !== 'ALLOCATION'}
+            />
+          </div>
         </div>
         
         <RivalLeaderboard
