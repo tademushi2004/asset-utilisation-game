@@ -11,7 +11,6 @@ import {
   INITIAL_COINS,
   MAX_TURNS,
   LIFE_EVENTS,
-  LIFE_EVENT_CASH_THRESHOLD,
   emptyAllocation,
 } from '../types/game';
 import { calculateMarketRates, generateEventSchedule, createMarketEvent, applyRates, updatePriceIndex } from '../logic/market';

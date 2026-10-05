@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { type Rival, type EventType, type Allocation, ASSET_CLASSES, totalAllocated, INITIAL_COINS } from '../types/game';
+import { type Rival, type EventType, type Allocation, ASSET_CLASSES, INITIAL_COINS } from '../types/game';
 import { getRivalAllocation } from '../logic/rival';
 
 interface Props {

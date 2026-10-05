@@ -9,7 +9,7 @@ interface Props {
   eventHistory: EventHistoryEntry[];
 }
 
-const InfoPanel: React.FC<Props> = ({ turn, currentEvent, marketHistory, eventHistory }) => {
+const InfoPanel: React.FC<Props> = ({ turn, marketHistory, eventHistory }) => {
   return (
     <div className="info-panel">
       <div className="info-panel__section glass-panel info-panel__section--chart" style={{ display: 'flex', flexDirection: 'column' }}>

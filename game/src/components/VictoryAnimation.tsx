@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { getFinalRankings } from '../logic/scoring';
 import { type PlayerState, type Rival } from '../types/game';
 import { useSound } from '../hooks/useSound';
 
@@ -9,7 +8,7 @@ interface Props {
   onComplete: () => void;
 }
 
-const VictoryAnimation: React.FC<Props> = ({ player, rivals, onComplete }) => {
+const VictoryAnimation: React.FC<Props> = ({ onComplete }) => {
   const [stage, setStage] = useState<'box' | 'pop'>('box');
   const { playBoom, playCoinAdd } = useSound();
 
