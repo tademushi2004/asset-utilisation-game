@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getFinalRankings } from '../logic/scoring';
 import { type PlayerState, type Rival } from '../types/game';
+import { useSound } from '../hooks/useSound';
 
 interface Props {
   player: PlayerState;
@@ -10,19 +11,37 @@ interface Props {
 
 const VictoryAnimation: React.FC<Props> = ({ player, rivals, onComplete }) => {
   const [stage, setStage] = useState<'box' | 'pop'>('box');
+  const { playBoom, playCoinAdd } = useSound();
 
   useEffect(() => {
-    // 1秒後に箱が開く
+    // 1.5秒後に箱が開く
     const timer1 = setTimeout(() => {
       setStage('pop');
-      // 箱が開いてから2.5秒後に次へ
+      playBoom(); // ドンッという音
+      
+      // コイン増加音を5秒間鳴らし続ける
+      let count = 0;
+      const interval = setInterval(() => {
+        playCoinAdd();
+        count++;
+        if (count >= 50) { // 100ms * 50 = 5秒
+          clearInterval(interval);
+        }
+      }, 100);
+
+      // 5.5秒後に次へ（音が鳴り終わってから少し余韻）
       const timer2 = setTimeout(() => {
         onComplete();
-      }, 2500);
-      return () => clearTimeout(timer2);
-    }, 1000);
+      }, 5500);
+      
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timer2);
+      };
+    }, 1500);
+    
     return () => clearTimeout(timer1);
-  }, [onComplete]);
+  }, [onComplete, playBoom, playCoinAdd]);
 
   return (
     <div style={{

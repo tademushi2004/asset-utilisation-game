@@ -17,7 +17,7 @@ export function createRivals(): Rival[] {
     {
       name: 'ゾウのエレファ',
       emoji: '🐘',
-      description: '穏やかな草食獣。全額を預金（水）に避難。',
+      description: '穏やかな草食獣。預金（水）と債券（草）のみで手堅く生きる。',
       coins: INITIAL_COINS,
       strategy: 'timid',
       panickedLastTurn: false,
@@ -66,11 +66,15 @@ export function getRivalAllocation(rival: Rival, lastEvent: EventType, lastRates
       alloc.foreign_stock = coins;
       break;
       
-    case 'timid':
-      // 全額を預金に
-      alloc.cash = coins;
+    case 'timid': {
+      // 預金と債券のみに配分（草食獣）
+      const half = Math.floor(coins / 2);
+      const quarter = Math.floor(coins / 4);
+      alloc.cash = half;
+      alloc.domestic_bond = quarter;
+      alloc.foreign_bond = coins - half - quarter;
       break;
-      
+    }
     case 'panic': {
       // 前ターンで大暴落が発生した場合、パニックで預金に全額避難
       if (lastEvent === 'CRASH') {

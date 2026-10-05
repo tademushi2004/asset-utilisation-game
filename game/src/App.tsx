@@ -12,7 +12,6 @@ import ResultScreen from './components/ResultScreen';
 import ConfirmModal from './components/ConfirmModal';
 import EventPopup from './components/EventPopup';
 import LifeEventPopup from './components/LifeEventPopup';
-import SoundTestPanel from './components/SoundTestPanel';
 import VictoryAnimation from './components/VictoryAnimation';
 import AssetTrendChart from './components/AssetTrendChart';
 import { getFinalRankings } from './logic/scoring';
@@ -385,8 +384,6 @@ const App: React.FC = () => {
           onCancel={() => setShowRetireModal(false)}
         />
       )}
-      
-      <SoundTestPanel />
     </div>
   );
 };
