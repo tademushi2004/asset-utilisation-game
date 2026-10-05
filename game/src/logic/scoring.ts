@@ -43,6 +43,7 @@ export function getPlayStyleTitle(player: PlayerState): PlayStyleTitle {
   
   // 各ターンの配分比率を分析
   let balancedTurns = 0;
+  let coreSatelliteTurns = 0;
   let stockHeavyTurns = 0;
   let cashHeavyTurns = 0;
   let volatileTurns = 0;
@@ -59,9 +60,23 @@ export function getPlayStyleTitle(player: PlayerState): PlayStyleTitle {
       ratios[key] = alloc[key] / total;
     }
     
-    // バランスチェック: 全5資産が15%〜25%以内
+    // バランスチェック: 全5資産が12%〜28%以内
     const isBalanced = Object.values(ratios).every(r => r >= 0.12 && r <= 0.28);
     if (isBalanced) balancedTurns++;
+    
+    // コア・サテライト戦略チェック: 預金が固定(15〜60)で、残りを4分割している
+    const cashAmt = alloc['cash'] || 0;
+    const investedTotal = total - cashAmt;
+    let isCoreSatellite = false;
+    if (cashAmt >= 15 && cashAmt <= 60 && investedTotal > 0) {
+      isCoreSatellite = Object.entries(alloc)
+        .filter(([k]) => k !== 'cash')
+        .every(([, v]) => {
+          const r = v / investedTotal;
+          return r >= 0.15 && r <= 0.35; // 投資部分の15%〜35%（均等なら25%）
+        });
+    }
+    if (isCoreSatellite) coreSatelliteTurns++;
     
     // 株式偏重チェック: 株式合計が70%以上
     const stockRatio = (ratios.domestic_stock || 0) + (ratios.foreign_stock || 0);
@@ -87,7 +102,17 @@ export function getPlayStyleTitle(player: PlayerState): PlayStyleTitle {
   }
   
   // 称号判定（優先順位順）
+  const coreSatelliteRatio = coreSatelliteTurns / totalTurns;
   const balanceRatio = balancedTurns / totalTurns;
+  
+  if (coreSatelliteRatio >= 0.7) {
+    return {
+      title: '至高の特上松花堂弁当',
+      subtitle: 'コア・サテライト運用を極めた真のマスター',
+      emoji: '👑',
+      rank: 'S',
+    };
+  }
   
   if (balanceRatio >= 0.7) {
     return {

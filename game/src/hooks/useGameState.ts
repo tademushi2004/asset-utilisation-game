@@ -46,6 +46,7 @@ function createInitialState(): GameState {
       wallet: INITIAL_COINS,
       history: [INITIAL_COINS],
       allocationHistory: [],
+      targetRatios: null,
     },
     rivals: createRivals(),
     marketHistory,
@@ -122,6 +123,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           ...state.player,
           allocation: newAllocation,
           wallet: currentWallet - actualMove,
+          targetRatios: null,
         },
       };
     }
@@ -132,28 +134,49 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       const lastTotal = Object.values(lastAllocation).reduce((sum, val) => sum + val, 0);
       if (lastTotal <= 0) return state;
       
+      const targetRatios: Record<string, number> = state.player.targetRatios || {};
+      if (!state.player.targetRatios) {
+        for (const assetId of Object.keys(lastAllocation) as AssetClassId[]) {
+          targetRatios[assetId] = lastAllocation[assetId] / lastTotal;
+        }
+      }
+      
       const currentCoins = state.player.coins;
       const newAllocation = emptyAllocation();
       let totalAllocated = 0;
       
-      for (const assetId of Object.keys(newAllocation) as AssetClassId[]) {
-        if (assetId !== 'cash') {
-          const ratio = lastAllocation[assetId] / lastTotal;
-          const amt = Math.floor(currentCoins * ratio);
-          newAllocation[assetId] = amt;
-          totalAllocated += amt;
-        }
+      const exactAmounts: Record<string, number> = {};
+      const assetIds = Object.keys(newAllocation) as AssetClassId[];
+      
+      for (const assetId of assetIds) {
+        const ratio = targetRatios[assetId];
+        const exact = currentCoins * ratio;
+        exactAmounts[assetId] = exact;
+        const amt = Math.floor(exact);
+        newAllocation[assetId] = amt;
+        totalAllocated += amt;
       }
       
-      const remaining = currentCoins - totalAllocated;
-      newAllocation['cash'] = Math.max(0, remaining);
+      const remainder = currentCoins - totalAllocated;
+      
+      // 端数をLargest Remainder Method（最大剰余方式）で分配する
+      const sortedAssetIds = [...assetIds].sort((a, b) => {
+        const fracA = exactAmounts[a] - newAllocation[a];
+        const fracB = exactAmounts[b] - newAllocation[b];
+        return fracB - fracA;
+      });
+      
+      for (let i = 0; i < remainder; i++) {
+        newAllocation[sortedAssetIds[i]] += 1;
+      }
       
       return {
         ...state,
         player: {
           ...state.player,
           allocation: newAllocation,
-          wallet: 0, // 端数も含めすべて割り振る
+          wallet: 0, 
+          targetRatios: targetRatios as Record<AssetClassId, number>,
         }
       };
     }
